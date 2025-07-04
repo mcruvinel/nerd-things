@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Solução da Equação Paramétrica</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      font-family: 'CMU Serif', 'Times New Roman', serif;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 800px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 20px 0;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    .equation {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 5px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background-color: white;
+      border: 1px solid #ddd;
+    }
+    
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 25px;
+      font-size: 1em;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #2980b9;
+    }
+    
+    .coordinate-system {
+      position: relative;
+      margin: 30px auto;
+    }
+    
+    .axis {
+      position: absolute;
+      background-color: #333;
+    }
+    
+    .x-axis {
+      width: 100%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+    }
+    
+    .y-axis {
+      width: 1px;
+      height: 100%;
+      top: 0;
+      left: 50%;
+    }
+    
+    .tick {
+      position: absolute;
+      background-color: #333;
+      font-size: 12px;
+    }
+    
+    .x-tick {
+      width: 1px;
+      height: 5px;
+      top: 50%;
+    }
+    
+    .y-tick {
+      width: 5px;
+      height: 1px;
+      left: 50%;
+    }
+    
+    .tick-label {
+      position: absolute;
+      font-size: 12px;
+      color: #333;
+    }
+    
+    .x-label {
+      top: 52%;
+    }
+    
+    .y-label {
+      left: 52%;
+    }
+    
+    .origin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+    }
+    
+    .result {
+      text-align: center;
+      font-style: italic;
+      margin-top: 20px;
+      opacity: 0;
+      transition: opacity 1s;
+    }
+    
+    .show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Análise de Equações Paramétricas</h1>
+    
+    <div class="equation">
+      <h2>Equação Paramétrica em Estudo:</h2>
+      $$\begin{cases}
+      x(t) = 16\sin^3(t) \\
+      y(t) = 13\cos(t) - 5\cos(2t) - 2\cos(3t) - \cos(4t)
+      \end{cases}, \quad t \in [0, 2\pi]$$
+    </div>
+    
+    <div class="coordinate-system" style="width: 600px; height: 500px;">
+      <div class="axis x-axis"></div>
+      <div class="axis y-axis"></div>
+      <span class="origin">O</span>
+      
+      <!-- Eixos X -->
+      <div class="tick x-tick" style="left: 10%;"></div>
+      <div class="tick x-tick" style="left: 20%;"></div>
+      <div class="tick x-tick" style="left: 30%;"></div>
+      <div class="tick x-tick" style="left: 40%;"></div>
+      <div class="tick x-tick" style="left: 60%;"></div>
+      <div class="tick x-tick" style="left: 70%;"></div>
+      <div class="tick x-tick" style="left: 80%;"></div>
+      <div class="tick x-tick" style="left: 90%;"></div>
+      
+      <!-- Eixos Y -->
+      <div class="tick y-tick" style="top: 10%;"></div>
+      <div class="tick y-tick" style="top: 20%;"></div>
+      <div class="tick y-tick" style="top: 30%;"></div>
+      <div class="tick y-tick" style="top: 40%;"></div>
+      <div class="tick y-tick" style="top: 60%;"></div>
+      <div class="tick y-tick" style="top: 70%;"></div>
+      <div class="tick y-tick" style="top: 80%;"></div>
+      <div class="tick y-tick" style="top: 90%;"></div>
+      
+      <canvas id="heartCanvas" width="600" height="500"></canvas>
+    </div>
+    
+    <button id="solveButton">Resolver Equação</button>
+    
+    <div class="result" id="result">
+  <h2>📈 Análise Matemática do Amor</h2>
+
+  <p><strong>Equação Relacional:</strong><br>
+    \( x^2 + \left( y - \sqrt[3]{x^2} \right)^2 = 1 \)
+  </p>
+
+  <p><strong>Curva Resultante:</strong><br>
+    Coração simétrico com continuidade suave — singularidade emocional no ponto (0, 1.5)
+  </p>
+
+  <p><strong>Comportamento:</strong><br>
+    Bifurcação positiva no eixo y; crescimento exponencial da afeição para \( t \to +\infty \)
+  </p>
+
+  <p><strong>Aplicabilidade:</strong><br>
+    Representação gráfica idealizada do sentimento contínuo.<br>
+    Útil para modelar relacionamentos com reciprocidade e ressonância emocional.
+  </p>
+
+  <p><strong>Resultado da Simulação:</strong><br>
+    💚 Amor detectado com 100.000000% de certeza<br>
+     Emoção persistente armazenada com redundância tripla (RAID-LUV)
+  </p>
+
+  <p><strong>Nota Final:</strong><br>
+    Sistema incapaz de quantificar magnitude exata da admiração.<br>
+    Resultado: <em>"Te amo além do que posso computar."</em>
+  </p>
+</div>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const canvas = document.getElementById('heartCanvas');
+      const ctx = canvas.getContext('2d');
+      const button = document.getElementById('solveButton');
+      const result = document.getElementById('result');
+      
+      function resizeCanvas() {
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = 600 * ratio;
+        canvas.height = 500 * ratio;
+        canvas.style.width = '600px';
+        canvas.style.height = '500px';
+        ctx.scale(ratio, ratio);
+      }
+      resizeCanvas();
+      
+      function generateCurvePoints() {
+        const points = [];
+        for (let t = 0; t <= 2 * Math.PI; t += 0.01) {
+          const x = 16 * Math.pow(Math.sin(t), 3);
+          const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+          points.push({x, y});
+        }
+        return points;
+      }
+      
+      function drawCoordinateSystem() {
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        
+        // Eixo X
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+        
+        // Eixo Y
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 0);
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.stroke();
+        
+        // Marcas nos eixos
+        ctx.font = '12px CMU Serif';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        
+        // Marcas do eixo X
+        for (let x = -20; x <= 20; x += 5) {
+          if (x === 0) continue;
+          const px = canvas.width / 2 + x * 10;
+          ctx.beginPath();
+          ctx.moveTo(px, canvas.height / 2 - 5);
+          ctx.lineTo(px, canvas.height / 2 + 5);
+          ctx.stroke();
+          ctx.fillText(x.toString(), px, canvas.height / 2 + 10);
+        }
+        
+        // Marcas do eixo Y
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        for (let y = -20; y <= 20; y += 5) {
+          if (y === 0) continue;
+          const py = canvas.height / 2 - y * 10;
+          ctx.beginPath();
+          ctx.moveTo(canvas.width / 2 - 5, py);
+          ctx.lineTo(canvas.width / 2 + 5, py);
+          ctx.stroke();
+          ctx.fillText(y.toString(), canvas.width / 2 - 10, py);
+        }
+        
+        // Origem
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('O', canvas.width / 2 - 5, canvas.height / 2 + 5);
+      }
+      
+      function plotSolution() {
+        const points = generateCurvePoints();
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const scale = 10;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawCoordinateSystem();
+        
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 2;
+        ctx.fillStyle = 'rgba(231, 76, 60, 0.1)';
+        
+        let i = 0;
+        let rafId;
+        
+        function drawFrame() {
+          if (i >= points.length) {
+            ctx.beginPath();
+            for (let j = 0; j < points.length; j++) {
+              const x = centerX + points[j].x * scale;
+              const y = centerY - points[j].y * scale;
+              
+              if (j === 0) {
+                ctx.moveTo(x, y);
+              } else {
+                ctx.lineTo(x, y);
+              }
+            }
+            
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            result.classList.add('show');
+            
+            button.textContent = "Solução Encontrada";
+            button.style.backgroundColor = "#27ae60";
+            
+            cancelAnimationFrame(rafId);
+            return;
+          }
+          
+          ctx.beginPath();
+          
+          for (let j = 0; j < i; j++) {
+            const x = centerX + points[j].x * scale;
+            const y = centerY - points[j].y * scale;
+            
+            if (j === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          
+          ctx.stroke();
+          i++;
+          rafId = requestAnimationFrame(drawFrame);
+        }
+        
+        drawFrame();
+      }
+      
+      button.addEventListener('click', function() {
+        this.disabled = true;
+        this.textContent = "Calculando...";
+        plotSolution();
+      });
+      
+      drawCoordinateSystem();
+    });
+  </script>
+</body>
+</html>
